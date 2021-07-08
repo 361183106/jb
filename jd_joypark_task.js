@@ -79,7 +79,7 @@ message = ""
 
       await getTaskList();
 
-      // 签到 / 逛会场 / 浏览商品
+      // 签到 / 逛会场 / 浏览商品1
       for (const task of $.taskList) {
         if (task.taskType === 'SIGN') {
           $.log(`${task.taskTitle} 签到`)
