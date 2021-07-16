@@ -10,4 +10,4 @@ ql repo https://github.com/lksky8/jb.git
 东东健康社区
 提额
 
-集成：wen smiek Tsukasa007
+集成：wen smiek Tsukasa007 jiulan
