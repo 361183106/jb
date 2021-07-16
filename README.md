@@ -9,5 +9,6 @@ ql repo https://github.com/lksky8/jb.git
 惊喜签到
 东东健康社区
 提额
+女装盲盒
 
 集成：wen smiek Tsukasa007 jiulan cdle
