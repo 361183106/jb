@@ -3,7 +3,6 @@ ql repo https://github.com/lksky8/jb.git
 ql repo https://github.com/lksky8/jb.git "rc" "master"
 
 目前有问题的任务:
-签到领现金
 东东小窝
 摇钱树
 惊喜签到
