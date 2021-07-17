@@ -1,13 +1,11 @@
-懒人库
-ql repo https://github.com/lksky8/jb.git
-ql repo https://github.com/lksky8/jb.git "rc" "master"
+## 懒人库
+* ql repo https://github.com/lksky8/jb.git "rc|dj" ""
 
-目前有问题的任务:
-东东小窝
-摇钱树
-惊喜签到
-东东健康社区
-提额
-女装盲盒
+## 目前有问题的任务:
+* 东东小窝
+* 摇钱树
+* 东东健康社区
+* 提额
+* 女装盲盒
 
 集成：wen smiek Tsukasa007 jiulan cdle
