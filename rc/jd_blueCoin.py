@@ -3,7 +3,7 @@
 '''
 项目名称: JD-Script / jd_blueCoin
 Author: Curtin
-功能: 东东超市商品兑换
+功能: 东东超市商品兑换备用
 Date: 2021/4/17 上午11:22
 update: 2021/7/17 01:15
 TG交流 https://t.me/topstyle996
