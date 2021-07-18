@@ -1,13 +1,16 @@
 /*
-早起福利
-更新时间：2021-7-8
-30 6 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_goodMorning.js
+活动：早起赢现金
+更新时间：2021-7-17
+入口：京东汽车-瓜分万元
+备注：支付一元才能参与活动，填写环境变量morningScPins给指定账号打卡
+TG学习交流群：https://t.me/cdles
+30 7 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_morningSc.js
 */
-const $ = new Env("早起福利")
+const $ = new Env("早起赢现金")
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
 let cookiesArr = []
-let cookie = ''
-
+var pins = process.env.morningScPins ?? ""
+let cookie = '';
 !(async () => {
     await requireConfig()
     if (!cookiesArr[0]) {
@@ -16,9 +19,16 @@ let cookie = ''
         });
         return;
     }
+    if(!pins){
+        console.log("未设置环境变量morningScPins")
+    }
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
+            pin = cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]
+            if(!pins || pins.indexOf(pin)==-1){
+                continue
+            }
             $.cookie = cookie;
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             $.index = i + 1;
@@ -36,40 +46,95 @@ let cookie = ''
                 }
                 continue
             }
-            await goodMorning()
+            data = await queryUserInfo()
+            if (!data?.body?.isClockDay) {
+                if(data?.body?.clockStatus){
+                    if(data?.body?.paymentStatus){
+                        console.log("已经打过卡了，明天再来打卡吧")
+                    }else{
+                        console.log("已经打过卡了，未参加明天的打卡")
+                    }
+                    
+                }else{
+                    console.log("未参与打卡活动")
+                }
+                continue
+            } else {
+
+            }
+            data = await clockIn()
+            if (data?.head?.code == 200) {
+                notify.sendNotify(`早起赢现金打卡成功，记得参与明天的打卡活动哦`);
+            } else {
+                notify.sendNotify(`早起赢现金打卡错误`, data);
+            }
         }
     }
 })()
-function goodMorning() {
-     return new Promise(resolve => {
-         $.get({
-             url: 'https://api.m.jd.com/client.action?functionId=morningGetBean&area=22_1930_50948_52157&body=%7B%22rnVersion%22%3A%224.7%22%2C%22fp%22%3A%22-1%22%2C%22eid%22%3A%22%22%2C%22shshshfp%22%3A%22-1%22%2C%22userAgent%22%3A%22-1%22%2C%22shshshfpa%22%3A%22-1%22%2C%22referUrl%22%3A%22-1%22%2C%22jda%22%3A%22-1%22%7D&build=167724&client=apple&clientVersion=10.0.6&d_brand=apple&d_model=iPhone12%2C8&eid=eidI1aaf8122bas5nupxDQcTRriWjt7Slv2RSJ7qcn6zrB99mPt31yO9nye2dnwJ/OW%2BUUpYt6I0VSTk7xGpxEHp6sM62VYWXroGATSgQLrUZ4QHLjQw&isBackground=N&joycious=60&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=32280b23f8a48084816d8a6c577c6573c162c174&osVersion=14.4&partner=apple&rfs=0000&scope=01&screen=750%2A1334&sign=0c19e5962cea97520c1ef9a2e67dda60&st=1625354180413&sv=112&uemps=0-0&uts=0f31TVRjBSsqndu4/jgUPz6uymy50MQJSPYvHJMKdY9TUw/AQc1o/DLA/rOTDwEjG4Ar9s7IY4H6IPf3pAz7rkIVtEeW7XkXSOXGvEtHspPvqFlAueK%2B9dfB7ZbI91M9YYXBBk66bejZnH/W/xDy/aPsq2X3k4dUMOkS4j5GHKOGQO3o2U1rhx5O70ZrLaRm7Jy/DxCjm%2BdyfXX8v8rwKw%3D%3D&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D&wifiBssid=c99b216a4acd3bce759e369eaeeafd7',
-             headers: {
-                 'Cookie': cookie,
-                 'Accept': '*/*',
-                 'Connection': 'keep-alive',
-                 'Accept-Encoding': 'gzip, deflate, br',
-                 'User-Agent': ua,
-                 'Accept-Language': 'zh-Hans-CN;q=1',
-                 'Host': 'api.m.jd.com'
-             },
-         }, (err, resp, data) => {
-             try {
-                 data = JSON.parse(data)
-                 if(data.data){
-                      console.log(data.data.bizMsg)
-                 }
-                 if(data.errorMessage){
+
+function queryUserInfo() {
+    return new Promise(resolve => {
+        $.post({
+            url: 'https://api.m.jd.com/client.action?functionId=morning_sc_queryUserInfo',
+            headers: {
+                'Cookie': cookie,
+                'Accept': '*/*',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': ua,
+                'Accept-Language': 'zh-Hans-CN;q=1',
+                'Host': 'api.m.jd.com'
+            },
+            body: `adid=BC3866ED-A85F-40FA-830E-508F0F7226EE&body={}&build=167724&client=apple&clientVersion=10.0.6&openudid=84106e1c43687f454bfb69b7831034a7f02e2d62&sign=ddf05193cf9b3960b8bb486e1861a70f&st=1626353585939&sv=110`
+        }, (err, resp, data) => {
+            try {
+                data = JSON.parse(data)
+                if (data.data) {
+                    console.log(data.data.bizMsg)
+                }
+                if (data.errorMessage) {
                     console.log(data.errorMessage)
-               }
-             } catch (e) {
-                 $.logErr('Error: ', e, resp)
-             } finally {
-                 resolve(data)
-             }
-         })
-     })
- }
+                }
+            } catch (e) {
+                $.logErr('Error: ', e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
+
+function clockIn() {
+    return new Promise(resolve => {
+        $.post({
+            url: 'https://api.m.jd.com/client.action?functionId=morning_sc_clockIn',
+            headers: {
+                'Cookie': cookie,
+                'Accept': '*/*',
+                'Connection': 'keep-alive',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': ua,
+                'Accept-Language': 'zh-Hans-CN;q=1',
+                'Host': 'api.m.jd.com'
+            },
+            body: `adid=BC3866ED-A85F-40FA-830E-508F0F7226EE&area=20_1726_22885_51456&body={}&build=167724&client=apple&clientVersion=10.0.6&d_brand=apple&d_model=iPhone10,4&joycious=94&lang=zh_CN&networkType=4g&networklibtype=JDNetworkBaseAF&openudid=84106e1c43687f454bfb69b7831034a7f02e2d62&osVersion=14.4.2&partner=apple&rfs=0000&scope=10&screen=750*1334&sign=493d44a41b6d852e024c75cbaacf51d2&st=1626478320220&sv=121&uemps=0-0&uts=0f31TVRjBSulv7BX1PVDEL+N224mGHmcXDxrm4KUU12U5TiWKO80M8NhmREN8AbYjX/cYxQZMj6dPyVM7JTDXDlk8K/RJ8KM1Yvh9BQ39IZXuuMt6KCAs0vkhr0Vpi91T+T36Xjdi/wgv3BzIR3BjFcMnccL+ht5gtKPSCNseuUCFsj9Sn6tgKI8QlIk4/oKAUhYBd5NKA+FS1ya0bJSBQ==&uuid=hjudwgohxzVu96krv/T6Hg==`
+        }, (err, resp, data) => {
+            try {
+                data = JSON.parse(data)
+                if (data.data) {
+                    console.log(data.data.bizMsg)
+                }
+                if (data.errorMessage) {
+                    console.log(data.errorMessage)
+                }
+            } catch (e) {
+                $.logErr('Error: ', e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
 
 function requireConfig() {
     return new Promise(resolve => {
