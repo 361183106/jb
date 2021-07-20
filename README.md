@@ -2,7 +2,6 @@
 * ql repo https://github.com/lksky8/jb.git "rc|dj" ""
 
 ## 目前有问题的任务:
-* 东东小窝
 * 摇钱树
 * 东东健康社区
 * 提额
