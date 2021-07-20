@@ -1,5 +1,5 @@
 ## 懒人库
-* ql repo https://github.com/lksky8/jb.git "rc|dj" ""
+* ql repo https://github.com/lksky8/jb.git "rc|dj|utils" ""
 
 ## 目前有问题的任务:
 * 摇钱树
