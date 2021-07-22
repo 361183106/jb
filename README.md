@@ -2,7 +2,7 @@
 * ql repo https://github.com/lksky8/jb.git "rc|dj|utils" ""
 
 ## 目前有问题的任务:
-* 摇钱树
+* 宠汪汪
 * 点点券
 * 提额
 * 女装盲盒
