@@ -5,6 +5,6 @@
 * 宠汪汪
 * 点点券
 * 提额
-* 女装盲盒
+* 试用
 
 集成：wen smiek Tsukasa007 jiulan cdle
